@@ -4,32 +4,55 @@
 
 Find the largest palindrome made from the product of two -digit numbers."""
 
+import pytest
 
-def isPalindrome(x: int):
+ANSWER = 906609
+
+
+def is_palindrome(x: int) -> bool:
     "Check to see if number is palindrome"
+
     xs = str(x)
-    i = 0
-    t = True
-    while i < len(xs) / 2:
-        breakpoint()  # not done yet
+    l = int(len(xs) / 2)
+    for i in range(0, l):
+        if xs[i] != xs[-(i + 1)]:
+            return False
+    return True
+
+
+@pytest.mark.parametrize(
+    "actual,expected", [("123321", True), (1234321, True), (123123, False)]
+)
+def test_is_palindrome(actual, expected):
+    if expected:
+        assert is_palindrome(actual)
+        return
+    assert not is_palindrome(actual)
+
+
+def find_palindrome(digits: int = 3):
+    lower = int(10 ** (digits - 1))
+    upper = int(10**digits - 1)
+    for a in range(upper, lower, -1):
+        for b in range(upper, lower, -1):
+            x = a * b
+            if is_palindrome(x):
+                return (True, a, b)
+    return False, upper, lower
 
 
 def main():
-    a = 999
-    b = 999
-    x = 0
-    done = False
-    while a > 100:
-        while b > 100:
-            x = a * b
-            done = isPalindrome(x)
-            if done:
-                break
-            b = b - 1
-        if done:
-            break
-        a = a - 1
-    print(x, " is a product of", a, " x ", b)
+    digits = 3
+    found, a, b = find_palindrome()
+    if found:
+        x = a * b
+        print(
+            f"{a:4d} * {b:4d} = {x:8d} is a number palindrome with {digits:4d} digits"
+        )
+    else:
+        print(
+            f"no palindrome could be found for {digits:4d} digit numbers in the range from {a:8d} to {b:8d}"
+        )
 
 
 if __name__ == "__main__":
