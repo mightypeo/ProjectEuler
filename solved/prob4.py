@@ -29,15 +29,22 @@ def test_is_palindrome(actual, expected):
         return
     assert not is_palindrome(actual)
 
+products : list[tuple[int, int, int]]
+def a_generator(upper: int, lower: int):
+    products = [
+        (a * b, a, b) for a in range(upper, lower, -1) for b in range(upper, a-1, -1)
+    ]
+    for p in sorted(products, key=lambda x: x[0], reverse=True):
+        yield p
+
 
 def find_palindrome(digits: int = 3):
+    """product is commutative - not need to iterate b over the whole range"""
     lower = int(10 ** (digits - 1))
     upper = int(10**digits - 1)
-    for a in range(upper, lower, -1):
-        for b in range(upper, lower, -1):
-            x = a * b
-            if is_palindrome(x):
-                return (True, a, b)
+    for x, a, b in a_generator(upper, lower):
+        if is_palindrome(x):
+            return (True, a, b)
     return False, upper, lower
 
 
